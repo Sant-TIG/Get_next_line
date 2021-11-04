@@ -1,82 +1,90 @@
-#include <unistd.h>
-#include <stdlib.h>
 #include "get_next_line.h"
+#include <unistd.h>
 
-char	*ft_update_holder(char	*holder)
+char	*ft_get_new_holder(char *holder)
 {
-	ssize_t	i;
-	ssize_t	j;
+	//printf ("\n----- GET NEW HOLDER ----\n");
 	char	*dst;
+	size_t	i;
+	size_t	j;
 
 	i = 0;
-	j = 0;
-	if (!holder)
-		return (NULL);
 	while (holder[i] != '\n' && holder[i])
 		i++;
+	j = 0;
 	while (holder[i + j])
 		j++;
-	dst = (char *)malloc(sizeof(char) * (j + 1));
+	dst = (char *)malloc(sizeof(char) * (j + i));
 	if (!dst)
 		return (NULL);
 	j = 0;
-	while (holder[i])
-		dst[j++] = holder[i++];
+	while (holder[++i])
+		dst[j++] = holder[i];
 	dst[j] = '\0';
 	return (dst);
 }
 
-char	*ft_get_new_line(char *holder)
+char	*ft_get_new_line(const char *holder)
 {
-	ssize_t	i;
+	//printf ("\n----- GET NEW LINE ----\n");
 	char	*dst;
+	ssize_t	i;
 
 	i = 0;
 	if (!holder)
 		return (NULL);
-	while (holder[i] != '\n' && holder[i])
+	while (holder[i] && holder[i] != '\n')
 		i++;
 	dst = (char *)malloc(sizeof(char) * (i + 1));
 	if (!dst)
 		return (NULL);
-	i = 0;
-	while (holder[i] != '\n' && holder[i])
+	i = -1;
+	while (holder[++i])
 	{
 		dst[i] = holder[i];
-		i++;
+		if (dst[i] == '\n')
+			break;
 	}
-	if (holder[i] == '\n')
-		dst[i] = holder[i];
-	dst[i++] = '\0';
+	dst[i] = '\0';
 	return (dst);
 }
 
 char	*get_next_line(int fd)
 {
+	////printf ("\n----- GET NEXT LINE ----\n");
 	static char	*holder;
 	char		*buffer;
-	char		*line;
-	int			bytes;
+	char		*new_line;
+	ssize_t		bytes;
 
-	bytes = 1;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	bytes = 1;
+	buffer = (char	*)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
 		return (NULL);
-	while (!ft_check_newline(holder) && bytes > 0)
+	if (!holder)
 	{
+		holder = (char *)malloc(sizeof(char) * 1);
+		*holder = '\0';
+	}
+	while (!ft_check_line_break(holder) && bytes > 0)
+	{
+		//printf("\nno line break\n");
 		bytes = read(fd, buffer, BUFFER_SIZE);
-		if (bytes == -1)
+		//printf("bytes = |%ld|\n", bytes);
+		if (bytes < 0)
 		{
 			free(buffer);
 			return (NULL);
 		}
 		buffer[bytes] = '\0';
+		//printf("BUFFER = |%s|\n", buffer);
 		holder = ft_strjoin(holder, buffer);
+		//printf("HOLDER = |%s|\n", holder);
 	}
 	free(buffer);
-	line = ft_get_new_line(holder);//coger linea que vamos a imprimir
-	holder = ft_update_holder(holder); //actualizar el holder quitandole la linea
-	return (line);
+	new_line = ft_get_new_line((const char *)holder);
+	holder = ft_get_new_holder(holder);
+	return (new_line);
 }
