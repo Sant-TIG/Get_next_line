@@ -21,6 +21,7 @@ char	*ft_get_new_holder(char *holder)
 	while (holder[++i])
 		dst[j++] = holder[i];
 	dst[j] = '\0';
+	free(holder);
 	return (dst);
 }
 
@@ -86,5 +87,7 @@ char	*get_next_line(int fd)
 	free(buffer);
 	new_line = ft_get_new_line((const char *)holder);
 	holder = ft_get_new_holder(holder);
+	if (bytes == 0 || !new_line)
+		return (NULL);
 	return (new_line);
 }

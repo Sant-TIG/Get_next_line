@@ -31,6 +31,7 @@ char	*ft_strjoin(char *holder, char *buffer)
 	while (buffer[++j])
 		dst[i++] = buffer[j];
 	dst[i] = '\0';
+	free(holder);
 	return (dst);
 }
 
