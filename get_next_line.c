@@ -93,31 +93,59 @@ char	*get_next_line(int fd)
 }*/
 size_t	ft_get_char_len(const char *str, char c)
 {
+	printf("\n--- GET CHAR LEN ---\n");
 	size_t	i;
-	
+
 	i = 0;
-	if (!str)
-		return (NULL);
-	while (str[i] != c && str[i])
+	if (c == '\0')
+	{
+		while (str[i])
+			i++;
+		return (i);
+	}
+	while (str[i])
+	{
 		i++;
 		if (str[i] == c)
 		{
 			i++;
-			break;
+			return (i);
 		}
-	return (i);
+	}
+	return(0);
 }
 
-char	*ft_nosenombre(char *holder, size_t start, size_t finish)
+char	*ft_strdup(const char *str, size_t finish)
 {
+	printf("\n--- STRDUP ---\n");
 	char	*dst;
-	
-	dst = (char *)malloc(sizeof(char) * (finish - start + 1));
+
+	dst = (char *)malloc(sizeof(char) * (finish + 1));
 	if (!dst)
 		return (NULL);
-	while (start < finish)
-		*dst++ = holder[start++]
+	while (finish--)
+		*dst++ = *str++;
 	*dst = '\0';
+	return (dst);
+}
+
+char	*ft_update_holder(const char *str1, const char *str2)
+{
+	char	*dst;
+	size_t	str1_len;
+	size_t	str2_len;
+
+	str1_len = ft_get_char_len(str1, '\0');
+	str2_len = ft_get_char_len(str2, '\0');
+	dst = (char *)malloc(sizeof(char) * (str1_len + str2_len + 1));
+	if (!dst)
+		return (NULL);
+	while (*str1)
+		*dst++ = *str1++;
+	while (*str2)
+		*dst++ = str2++;
+	*dst = '\0';
+	free(str1);
 	return (dst);
 }
 
@@ -130,33 +158,45 @@ size_t	ft_check_char(const char *str, char c)
 	return (*str == c);
 }
 
-char	*noseelnombre(char *str, size_t start, char c)
+char	*ft_fill_next_line(const char *str, char **new_holder)
 {
-	char	*dst;
-	size_t	i;
-	
-	i = ft_get_char_len(holder, c);
-	dst = (char *)malloc(sizeof(char) * (i + 1));
-	if (!dst)
+	char	*next_line;
+
+	next_line = ft_strdup(str, ft_get_char_len(str, '\n'));
+	*new_holder = ft_strdup(str + ft_get_char_len(str, '\n'), ft_get_char_len(str, '\0'));
+	free(str);
+	if (!next_line || !*new_holder)
+	{
+		free(next_line);
+		free(*new_holder);
 		return (NULL);
-	while (i--)
-		*dst++ = *str++;
-	*dst = '\0';
-	return (dst);
+	}
+	return (next_line);
 }
 
 char	*get_next_line(int fd)
 {
-	static char *holder;
-	
+	static char	*holder;
+	char		next_line;
+	char		*buffer;
+
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (!holder)
-		holder = noseelnombre(holder, '\0');
-	while (!ft_check_char(holder, '\n'));
+	while (!ft_check_line_break(holder))
 	{
+		buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+		if (!buffer)
+			return (NULL);
+		bytes = read(fd, buffer, BUFFER_SIZE);
+		if (bytes == -1 || (bytes == 0 && ft_get_char_len(holder, '\0') == 0))
+		{
+			free(buffer);
+			free(holder);
+			return (NULL);
+		}
+		if (bytes < BUFFER_SIZE && ft_check_line_breal(buffer))
+			return ();
+		holder = ft_update_holder(holder, buffer);
 	}
-	next_line = noseelnombre(holder, 0, '\n');
-	holder = ft_noseelnombre(holder, ft_get_char_len(holder, '\n') - 1, '\0');
-	return (next_line);
+	return (ft_fill_next_line(holder, &holder));
 }
