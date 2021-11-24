@@ -38,11 +38,8 @@ size_t	ft_check_char(const char *str, int c)
 
 char	*ft_strcpy(char *dst, const char *src, size_t dstsize)
 {
-	ssize_t	i;
-
-	i = -1;
-	while (src[++i] && --dstsize)
-		dst[i] = src[i];
-	dst[i] = '\0';
+	while (*src && --dstsize)
+		*dst++ = *src++;
+	*dst = '\0';
 	return (dst);
 }
