@@ -42,7 +42,7 @@ static char	*ft_line_break_case(char *holder, char **new_holder)
 		return (NULL);
 	ft_strcpy(*new_holder, holder + nl_len, null_len - nl_len + 1);
 	free(holder);
-	if (!next_line || !new_holder)
+	if (!next_line || !*new_holder)
 	{
 		free(next_line);
 		free(*new_holder);
