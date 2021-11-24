@@ -2,14 +2,11 @@
 # define GET_NEXT_LINE_H
 
 # include <stdlib.h>
-#include <stdio.h>
 
-
+size_t	ft_check_char(const char *str, int c);
+size_t	ft_get_char_len(const char *str, int c);
+char	*ft_strcpy(char *dst, const char *src, size_t dstsize);
+char	*ft_strdup(const char *str, size_t len);
 char	*get_next_line(int fd);
-char	*ft_get_new_line(const char *holder);
-char	*ft_get_new_holder(char *holder);
-int		ft_check_line_break(char *holder);
-char	*ft_strjoin(char *holder, char *buffer);
-size_t	ft_strlen(char *str);
 
 #endif
