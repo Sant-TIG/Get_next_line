@@ -25,28 +25,28 @@ static char	*ft_update_holder(char *holder, char *buffer)
 	return (new_holder);
 }
 
-static char	*ft_line_break_case(char *str1, char **str2)
+static char	*ft_line_break_case(char *holder, char **new_holder)
 {
 	char	*next_line;
 	size_t	nl_len;
 	size_t	null_len;
 
-	nl_len = ft_get_char_len(str1, '\n');
-	null_len = ft_get_char_len(str1, '\0');
+	nl_len = ft_get_char_len(holder, '\n');
+	null_len = ft_get_char_len(holder, '\0');
 	next_line = (char *)malloc(sizeof(char) * nl_len + 1);
 	if (!next_line)
 		return (NULL);
-	ft_strcpy(next_line, str1, nl_len + 1);
-	*str2 = (char *)malloc(sizeof(char) * (null_len - nl_len + 1));
-	if (!str2)
+	ft_strcpy(next_line, holder, nl_len + 1);
+	*new_holder = (char *)malloc(sizeof(char) * (null_len - nl_len + 1));
+	if (!*new_holder)
 		return (NULL);
-	ft_strcpy(*str2, str1 + nl_len, null_len - nl_len + 1);
-	free(str1);
-	if (!next_line || !str2)
+	ft_strcpy(*new_holder, holder + nl_len, null_len - nl_len + 1);
+	free(holder);
+	if (!next_line || !new_holder)
 	{
 		free(next_line);
-		free(*str2);
-		str2 = NULL;
+		free(*new_holder);
+		*new_holder = NULL;
 		return (NULL);
 	}
 	return (next_line);
