@@ -33,14 +33,8 @@ static char	*ft_line_break_case(char *holder, char **new_holder)
 
 	nl_len = ft_get_char_len(holder, '\n');
 	null_len = ft_get_char_len(holder, '\0');
-	next_line = (char *)malloc(sizeof(char) * nl_len + 1);
-	if (!next_line)
-		return (NULL);
-	ft_strcpy(next_line, holder, nl_len + 1);
-	*new_holder = (char *)malloc(sizeof(char) * (null_len - nl_len + 1));
-	if (!*new_holder)
-		return (NULL);
-	ft_strcpy(*new_holder, holder + nl_len, null_len - nl_len + 1);
+	next_line = ft_strdup(holder, nl_len);
+	*new_holder = ft_strdup(holder + nl_len, null_len - nl_len);
 	free(holder);
 	if (!next_line || !*new_holder)
 	{
