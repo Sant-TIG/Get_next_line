@@ -1,5 +1,11 @@
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <limits.h>
+#define BUFFER_SIZE 42
+
 
 static char	*ft_update_holder(char *holder, char *buffer)
 {
@@ -91,4 +97,20 @@ char	*get_next_line(int fd)
 	free(holder[fd]);
 	holder[fd] = NULL;
 	return (next_line);
+}
+
+int main()
+{
+	ssize_t	fd = open("../textos/multiplelines.txt", O_RDONLY);
+	size_t	i = 4;
+	char *line;
+
+	while (i--)
+	{
+		line = get_next_line(fd);
+		printf("line %zu = %s\n", i, line);
+		free(line);
+	}
+	close(fd);
+	return (0);
 }
